@@ -2,7 +2,8 @@ package proof
 
 import (
 	"bytes"
-	"ioutil"
+	"hash/crc32"
+	"io/ioutil"
 	"testing"
 )
 
@@ -17,13 +18,13 @@ func TestCRC(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		buf := bytes.Buffer(data)
+		buf := bytes.NewBuffer(data)
 		h := crc32.NewIEEE()
-		r = NewReader32(buf, h, csum)
+		r := NewReader32(buf, h, c.csum)
 
 		_, err := ioutil.ReadAll(r)
 		if err != c.err {
-			t.Fatalf("expected error %v, got %v", c.err, err)
+			t.Fatalf("expected error: %v, got: %v", c.err, err)
 		}
 	}
 }
